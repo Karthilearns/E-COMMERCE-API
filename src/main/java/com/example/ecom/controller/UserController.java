@@ -1,10 +1,14 @@
 package com.example.ecom.controller;
 
 
+import com.example.ecom.model.Orders;
 import com.example.ecom.model.User;
+import com.example.ecom.repository.OrderRepository;
+import com.example.ecom.repository.ProductRepository;
 import com.example.ecom.repository.UserRepository;
 import com.example.ecom.service.UserService;
 import org.apache.commons.codec.binary.Base64;
+import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +36,12 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    OrderRepository orderRepository;
+
+    @Autowired
+    ProductRepository productRepository;
 
     VerificationMailerEntity verificationMailerEntity = new VerificationMailerEntity();
 
@@ -124,6 +134,26 @@ public class UserController {
         session.invalidate();
         return new ResponseEntity<>("Logged Out", HttpStatus.ACCEPTED);
     }
+
+    @PostMapping(value = "/placeorder")
+    public ResponseEntity<Orders> placeOrder(@RequestBody Orders orders)
+    {
+        try {
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            orders.setDate(now.toString());
+            orders.setStatus("ordered");
+            userService.placeOrder(orders);
+            return new ResponseEntity<>(orders,HttpStatus.CREATED);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>(orders,HttpStatus.BAD_REQUEST);
+
+    }
+
 
 
 

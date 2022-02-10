@@ -5,7 +5,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Table(name = "orders")
@@ -24,13 +23,11 @@ public class Orders {
             }
     )
     @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+    private String id;
 
     @Column(name = "product_name")
     private String product_name;
 
-    @Column(name = "product_id")
-    private String product_id;
 
     @Column(name = "category")
     private String category;
@@ -53,20 +50,23 @@ public class Orders {
     @Column(name = "customer_email")
     private String customer_email;
 
-    @Column(name = "seller_email")
-    private String seller_email;
+    @Column(name = "sellerEmail")
+    private String sellerEmail;
 
     @Column(name = "date")
     private String date;
 
+    @Column(name = "customer_address")
+    private  String customer_address;
+
     @Column(name = "status")
     private String status;
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -74,7 +74,6 @@ public class Orders {
     public String toString() {
         return "Orders{" +
                 "product_name='" + product_name + '\'' +
-                ", product_id='" + product_id + '\'' +
                 ", category='" + category + '\'' +
                 ", quantity='" + quantity + '\'' +
                 ", price='" + price + '\'' +
@@ -82,7 +81,7 @@ public class Orders {
                 ", shop_name='" + shop_name + '\'' +
                 ", customer_name='" + customer_name + '\'' +
                 ", customer_email='" + customer_email + '\'' +
-                ", seller_email='" + seller_email + '\'' +
+                ", seller_email='" + sellerEmail + '\'' +
                 ", date='" + date + '\'' +
                 ", status='" + status + '\'' +
                 '}';
@@ -96,13 +95,7 @@ public class Orders {
         this.product_name = product_name;
     }
 
-    public String getProduct_id() {
-        return product_id;
-    }
 
-    public void setProduct_id(String product_id) {
-        this.product_id = product_id;
-    }
 
     public String getCategory() {
         return category;
@@ -161,11 +154,11 @@ public class Orders {
     }
 
     public String getSeller_email() {
-        return seller_email;
+        return sellerEmail;
     }
 
     public void setSeller_email(String seller_email) {
-        this.seller_email = seller_email;
+        this.sellerEmail = seller_email;
     }
 
     public String getDate() {

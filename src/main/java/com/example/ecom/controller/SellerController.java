@@ -1,11 +1,13 @@
 package com.example.ecom.controller;
 
 
+import com.example.ecom.model.Orders;
 import com.example.ecom.model.Products;
 import com.example.ecom.model.Seller;
 import com.example.ecom.model.SellerLoginEntity;
+import com.example.ecom.repository.OrderRepository;
+import com.example.ecom.repository.ProductRepository;
 import com.example.ecom.repository.SellerRepository;
-import com.example.ecom.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -24,7 +27,11 @@ public class SellerController
     SellerRepository sellerRepository;
 
 
-    ProductService productService = new ProductService();
+    @Autowired
+    ProductRepository productRepository;
+
+    @Autowired
+    OrderRepository orderRepository;
 
     SellerVerificationMailerEntity sellerverificationMailerEntity= new SellerVerificationMailerEntity();;
 
@@ -84,6 +91,7 @@ public class SellerController
 
             if (passwordEntered.equals(passwordActuall) && sellerLoginEntity.getIsEmailVerified().equals("Y")) {
                 session.setAttribute("isAuth", "Y");
+                session.setAttribute("email",sellerLoginEntity.getEmail());
                 return new ResponseEntity<>("LOGGED IN SUCCESSFULLY", HttpStatus.ACCEPTED);
             } else if (passwordEntered.equals(passwordActuall) && sellerLoginEntity.getIsEmailVerified().equals("N")) {
                 return new ResponseEntity<>("NOT VERIFIED, PLEASE VERIFY YOUR EMAIL", HttpStatus.ACCEPTED);
@@ -106,10 +114,34 @@ public class SellerController
     @PostMapping(value = "/addproduct")
     public ResponseEntity<String> addproduct(@RequestBody Products product)
     {
-     productService.addProduct(product);
-     return new ResponseEntity<>("SUCCESS", HttpStatus.CREATED);
+        try {
+            productRepository.save(product);
+            return new ResponseEntity<>("SUCCESS", HttpStatus.CREATED);
+        }
+        catch (Exception e)
+        {
+            return new ResponseEntity<>("NOT SAVED TRY AGAIN", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/getmyorders")
+    public ResponseEntity<List<Orders>> getMyOrders(HttpServletRequest request)
+    {
+        HttpSession session = request.getSession();
+        System.out.println((String)session.getAttribute("email"));
+       List<Orders> orders = orderRepository.getAllBySellerEmail((String) session.getAttribute("email"));
+
+       return new ResponseEntity<>(orders,HttpStatus.ACCEPTED);
 
     }
+
+    @PutMapping(value = "/updateStatus")
+    public ResponseEntity<String> updateStatus(@RequestParam String status)
+    {
+        orderRepository.updateStatus(status);
+        return new ResponseEntity<>("UPDATED TO "+status, HttpStatus.ACCEPTED);
+    }
+
 
 
 }

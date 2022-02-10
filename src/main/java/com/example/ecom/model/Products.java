@@ -5,7 +5,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Table(name = "products")
@@ -24,10 +23,13 @@ public class Products {
             }
     )
     @Column(name = "id")
-    private UUID id;
+    private String id;
 
     @Column(name = "product_name")
     private String product_name;
+
+    @Column(name = "product_details")
+    private String product_details;
 
     @Column(name = "category")
     private String category;
@@ -53,8 +55,9 @@ public class Products {
     @Override
     public String toString() {
         return "Products{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", product_name='" + product_name + '\'' +
+                ", product_details='" + product_details + '\'' +
                 ", category='" + category + '\'' +
                 ", quantity_available='" + quantity_available + '\'' +
                 ", price='" + price + '\'' +
@@ -65,11 +68,19 @@ public class Products {
                 '}';
     }
 
-    public UUID getId() {
+    public String getProduct_details() {
+        return product_details;
+    }
+
+    public void setProduct_details(String product_details) {
+        this.product_details = product_details;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String  id) {
         this.id = id;
     }
 

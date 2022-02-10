@@ -1,8 +1,10 @@
 package com.example.ecom.service;
 
+import com.example.ecom.model.Orders;
+import com.example.ecom.model.User;
+import com.example.ecom.repository.OrderRepository;
 import com.example.ecom.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.example.ecom.model.User;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,6 +12,9 @@ public class UserService
 {
     @Autowired
     UserRepository userepo;
+
+    @Autowired
+    OrderRepository orderRepository;
 
 
      public User getUserById(String email)
@@ -24,4 +29,10 @@ public class UserService
      {
          userepo.updateEmailVerified(email);
      }
+
+     public void placeOrder(Orders orders)
+     {
+         orderRepository.save(orders);
+     }
+
 }
