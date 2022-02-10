@@ -62,6 +62,29 @@ public class Orders {
     @Column(name = "status")
     private String status;
 
+    @Column(name="payment_status")
+    private String payment_status;
+
+    @Override
+    public String toString() {
+        return "Orders{" +
+                "id='" + id + '\'' +
+                ", product_name='" + product_name + '\'' +
+                ", category='" + category + '\'' +
+                ", quantity='" + quantity + '\'' +
+                ", price='" + price + '\'' +
+                ", seller_name='" + seller_name + '\'' +
+                ", shop_name='" + shop_name + '\'' +
+                ", customer_name='" + customer_name + '\'' +
+                ", customer_email='" + customer_email + '\'' +
+                ", sellerEmail='" + sellerEmail + '\'' +
+                ", date='" + date + '\'' +
+                ", customer_address='" + customer_address + '\'' +
+                ", status='" + status + '\'' +
+                ", payment_status='" + payment_status + '\'' +
+                '}';
+    }
+
     public String getId() {
         return id;
     }
@@ -70,21 +93,28 @@ public class Orders {
         this.id = id;
     }
 
-    @Override
-    public String toString() {
-        return "Orders{" +
-                "product_name='" + product_name + '\'' +
-                ", category='" + category + '\'' +
-                ", quantity='" + quantity + '\'' +
-                ", price='" + price + '\'' +
-                ", seller_name='" + seller_name + '\'' +
-                ", shop_name='" + shop_name + '\'' +
-                ", customer_name='" + customer_name + '\'' +
-                ", customer_email='" + customer_email + '\'' +
-                ", seller_email='" + sellerEmail + '\'' +
-                ", date='" + date + '\'' +
-                ", status='" + status + '\'' +
-                '}';
+    public String getSellerEmail() {
+        return sellerEmail;
+    }
+
+    public void setSellerEmail(String sellerEmail) {
+        this.sellerEmail = sellerEmail;
+    }
+
+    public String getCustomer_address() {
+        return customer_address;
+    }
+
+    public void setCustomer_address(String customer_address) {
+        this.customer_address = customer_address;
+    }
+
+    public String getPayment_status() {
+        return payment_status;
+    }
+
+    public void setPayment_status(String payment_status) {
+        this.payment_status = payment_status;
     }
 
     public String getProduct_name() {

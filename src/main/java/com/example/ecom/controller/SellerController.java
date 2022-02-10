@@ -135,10 +135,11 @@ public class SellerController
 
     }
 
+
     @PutMapping(value = "/updateStatus")
-    public ResponseEntity<String> updateStatus(@RequestParam String status)
+    public ResponseEntity<String> updateStatus(@RequestParam String status, String id)
     {
-        orderRepository.updateStatus(status);
+        orderRepository.updateStatus(status,id);
         return new ResponseEntity<>("UPDATED TO "+status, HttpStatus.ACCEPTED);
     }
 

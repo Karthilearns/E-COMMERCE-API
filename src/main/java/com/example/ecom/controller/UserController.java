@@ -2,6 +2,7 @@ package com.example.ecom.controller;
 
 
 import com.example.ecom.model.Orders;
+import com.example.ecom.model.Products;
 import com.example.ecom.model.User;
 import com.example.ecom.repository.OrderRepository;
 import com.example.ecom.repository.ProductRepository;
@@ -19,6 +20,7 @@ import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.UUID;
 
 import com.example.ecom.model.UserLoginEntity;
@@ -26,6 +28,7 @@ import com.example.ecom.model.UserLoginEntity;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpSession;
+import javax.websocket.server.PathParam;
 
 @RestController
 @RequestMapping(value = "/user")
@@ -101,6 +104,7 @@ public class UserController {
 
             if (passwordEntered.equals(passwordActuall) && userLoginEntity.getIsVerified().equals("Y")) {
                 session.setAttribute("isAuth", "Y");
+                session.setAttribute("email",userLoginEntity.getEmail());
                 return new ResponseEntity<>("LOGGED IN SUCCESSFULLY", HttpStatus.ACCEPTED);
             } else if (passwordEntered.equals(passwordActuall) && userLoginEntity.getIsVerified().equals("N")) {
                 return new ResponseEntity<>("NOT VERIFIED, PLEASE VERIFY YOUR EMAIL", HttpStatus.ACCEPTED);
@@ -144,6 +148,7 @@ public class UserController {
             orders.setDate(now.toString());
             orders.setStatus("ordered");
             userService.placeOrder(orders);
+            productRepository.updateOrdersPlaced(orders.getSellerEmail(),orders.getProduct_name());
             return new ResponseEntity<>(orders,HttpStatus.CREATED);
         }
         catch (Exception e)
@@ -153,6 +158,24 @@ public class UserController {
         return new ResponseEntity<>(orders,HttpStatus.BAD_REQUEST);
 
     }
+    @GetMapping(value = "/getmyorders")
+    public ResponseEntity<List<Orders>> getMyOrders(HttpServletRequest request)
+    {
+        HttpSession session = request.getSession();
+        System.out.println((String)session.getAttribute("email"));
+        List<Orders> orders = orderRepository.getAllByCustomer_email((String) session.getAttribute("email"));
+
+        return new ResponseEntity<>(orders,HttpStatus.ACCEPTED);
+
+    }
+
+    @GetMapping(value = "/getproducts")
+    public ResponseEntity<List<Products>> getProducts(@RequestParam String filter)
+    {
+       List<Products> products = productRepository.getProducts(filter,filter);
+       return new ResponseEntity<>(products, HttpStatus.ACCEPTED);
+    }
+
 
 
 

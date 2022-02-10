@@ -49,6 +49,9 @@ public class Products {
     @Column(name = "shop_name")
     private String shop_name;
 
+    @Column(name = "orders_placed")
+    private int orders_placed;
+
     @Column(name = "status")
     private  String status;
 
@@ -79,7 +82,13 @@ public class Products {
     public String getId() {
         return id;
     }
+    public int getOrders_placed() {
+        return orders_placed;
+    }
 
+    public void setOrders_placed(int orders_placed) {
+        this.orders_placed = orders_placed;
+    }
     public void setId(String  id) {
         this.id = id;
     }
