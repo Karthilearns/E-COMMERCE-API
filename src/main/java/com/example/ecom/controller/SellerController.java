@@ -1,9 +1,11 @@
 package com.example.ecom.controller;
 
 
+import com.example.ecom.model.Products;
 import com.example.ecom.model.Seller;
 import com.example.ecom.model.SellerLoginEntity;
 import com.example.ecom.repository.SellerRepository;
+import com.example.ecom.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,8 @@ public class SellerController
     @Autowired
     SellerRepository sellerRepository;
 
+
+    ProductService productService = new ProductService();
 
     SellerVerificationMailerEntity sellerverificationMailerEntity= new SellerVerificationMailerEntity();;
 
@@ -97,6 +101,14 @@ public class SellerController
         session.removeAttribute("isAuth");
         session.invalidate();
         return new ResponseEntity<>("Logged Out", HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping(value = "/addproduct")
+    public ResponseEntity<String> addproduct(@RequestBody Products product)
+    {
+     productService.addProduct(product);
+     return new ResponseEntity<>("SUCCESS", HttpStatus.CREATED);
+
     }
 
 

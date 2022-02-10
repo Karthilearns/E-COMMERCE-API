@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface SellerRepository extends JpaRepository<Seller,Integer> {
+public interface SellerRepository extends JpaRepository<Seller,String> {
     @Query(value = "select * from seller_profile where email = ?1",nativeQuery = true)
     public Seller getUserById(String email);
 
