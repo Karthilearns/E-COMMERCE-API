@@ -1,9 +1,7 @@
 package com.example.ecom.model;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.util.Date;
 @Entity
 public class User {
     String firstName;
@@ -112,7 +110,6 @@ public class User {
     public String getAddress1() {
         return address1;
     }
-
     public void setAddress1(String address1) {
         this.address1 = address1;
     }

@@ -19,4 +19,11 @@ public interface UserRepository extends JpaRepository<User,String> {
      @Modifying
      @Query(value = "update user set email_verified = 'Y' where email=?",nativeQuery = true)
      public void updateEmailVerified(String email);
+
+     @Query(value = "select first_name  from user where email=?1",nativeQuery = true)
+     public  String getFirstNameByEmail(String email);
+
+
+     @Query(value = "update user set password=?1 where email=?2",nativeQuery = true)
+     void updatePassword(String newpassword,String email);
 }

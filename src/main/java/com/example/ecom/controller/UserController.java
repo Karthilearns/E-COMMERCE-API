@@ -31,6 +31,7 @@ import javax.servlet.http.HttpSession;
 import javax.websocket.server.PathParam;
 
 @RestController
+@CrossOrigin
 @RequestMapping(value = "/user")
 public class UserController {
 
@@ -57,12 +58,12 @@ public class UserController {
     @ResponseBody
     @GetMapping(value = "/sayhijson", produces = {"application/json", "application/xml"})
     public ResponseEntity<String> homejson() {
-        return new ResponseEntity<>("hi", HttpStatus.ACCEPTED);
+        return new ResponseEntity<>("hi json", HttpStatus.ACCEPTED);
     }
 
-    @PostMapping(value = "/signup", consumes = {"application/json", "application/xml"})
-    public ResponseEntity<String> signup(@RequestBody User user) {
-        String token = userService.getTokenByEmail(user.getEmail());
+    @PostMapping(value = "/signup", consumes = {"application/x-www-form-urlencoded","application/json"})
+    public ResponseEntity<String> signup( @RequestBody User user) {
+        String token = userrepo.getTokenByEmail(user.getEmail());
         if (token != null) {
             return new ResponseEntity<>("user already registered with this email id", HttpStatus.ALREADY_REPORTED);
         }
@@ -88,9 +89,11 @@ public class UserController {
         return new ResponseEntity<String>("Created", HttpStatus.CREATED);
     }
 
+    @Autowired
+    HttpSession session;
     @GetMapping(value = "/signin")
-    public ResponseEntity<String> signInUser(@RequestBody UserLoginEntity userLoginEntity, HttpServletRequest request) {
-        HttpSession session = request.getSession();
+    public ResponseEntity<String> signInUser(UserLoginEntity userLoginEntity, HttpServletRequest request) {
+
         try {
             System.out.print(userLoginEntity.getEmail());
             User user = userService.getUserById(userLoginEntity.getEmail());
@@ -104,6 +107,8 @@ public class UserController {
 
             if (passwordEntered.equals(passwordActuall) && userLoginEntity.getIsVerified().equals("Y")) {
                 session.setAttribute("isAuth", "Y");
+                session.setAttribute("name",user.getFirstName());
+                System.out.println(session.getAttribute("name"));
                 session.setAttribute("email",userLoginEntity.getEmail());
                 return new ResponseEntity<>("LOGGED IN SUCCESSFULLY", HttpStatus.ACCEPTED);
             } else if (passwordEntered.equals(passwordActuall) && userLoginEntity.getIsVerified().equals("N")) {
@@ -114,7 +119,7 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new ResponseEntity<String>("INVALID", HttpStatus.ACCEPTED);
+        return new ResponseEntity<String>("INVALID", HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping(value = "/verify-email/{otp}")
@@ -135,6 +140,8 @@ public class UserController {
     public ResponseEntity<String> logout(HttpServletRequest request) {
         HttpSession session = request.getSession();
         session.removeAttribute("isAuth");
+        session.removeAttribute("email");
+        session.removeAttribute("name");
         session.invalidate();
         return new ResponseEntity<>("Logged Out", HttpStatus.ACCEPTED);
     }
@@ -169,15 +176,39 @@ public class UserController {
 
     }
 
-    @GetMapping(value = "/getproducts")
+    @GetMapping(value = "/getallproducts" , produces = "application/json")
+    public ResponseEntity<List<Products>> getAllProducts()
+    {
+        System.out.println("get all products triggered");
+      List<Products> products=  productRepository.findAll();
+      return new ResponseEntity<>(products,HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/getproducts", produces = "application/json")
     public ResponseEntity<List<Products>> getProducts(@RequestParam String filter)
     {
+
        List<Products> products = productRepository.getProducts(filter,filter);
        return new ResponseEntity<>(products, HttpStatus.ACCEPTED);
     }
 
-
-
+    @GetMapping(value = "/getname")
+    public ResponseEntity<String> getName()
+    {
+        System.out.println("get name triggered");
+      String email = (String)session.getAttribute("email");
+      System.out.println(session.getAttribute("isAuth"));
+      System.out.println(email);
+      String name = userrepo.getFirstNameByEmail(email);
+      System.out.println(name);
+       return new ResponseEntity<>(name,HttpStatus.OK);
+    }
+    @PutMapping(value = "/forgotpassword")
+    public ResponseEntity<String> updatePassword(@RequestBody String newPassword, String email)
+    {
+        userrepo.updatePassword(newPassword,email);
+        return new ResponseEntity<>("CHANGED",HttpStatus.OK);
+    }
 
 
 }

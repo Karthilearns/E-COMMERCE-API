@@ -19,4 +19,9 @@ public interface SellerRepository extends JpaRepository<Seller,String> {
     @Modifying
     @Query(value = "update seller_profile set email_verified = 'Y' where email=?",nativeQuery = true)
     public void updateEmailVerified(String email);
+
+    @Transactional
+    @Modifying
+    @Query(value = "update seller_profile set password =?1 where email =?2",nativeQuery = true)
+    void updatePassword(String newPassword,String email);
 }

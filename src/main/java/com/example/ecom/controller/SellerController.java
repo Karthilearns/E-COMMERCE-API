@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,8 +35,8 @@ public class SellerController
     SellerVerificationMailerEntity sellerverificationMailerEntity= new SellerVerificationMailerEntity();;
 
 
-    @PostMapping(value = "/signup")
-    public ResponseEntity<String> signup(@RequestBody Seller seller)
+    @PostMapping(value = "/signup",consumes ={"application/x-www-form-urlencoded","application/json"})
+    public ResponseEntity<String> signup( @RequestBody  Seller seller)
     {
         String token = sellerRepository.getTokenByEmail(seller.getEmail());
         if (token != null) {
@@ -59,7 +58,7 @@ public class SellerController
             return new ResponseEntity<String>(new String("Seller not created, Please try again"), HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<String>("Seller Created", HttpStatus.CREATED);
+        return new ResponseEntity<String>("User Created", HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/verify-email/{otp}")
@@ -76,14 +75,14 @@ public class SellerController
     }
 
     @GetMapping(value = "/signin")
-    public ResponseEntity<String> signInUser(@RequestBody SellerLoginEntity sellerLoginEntity, HttpServletRequest request) {
+    public ResponseEntity<String> signInUser(SellerLoginEntity sellerLoginEntity, HttpServletRequest request) {
         HttpSession session = request.getSession();
         try {
             System.out.print(sellerLoginEntity.getEmail());
             Seller seller = sellerRepository.getUserById(sellerLoginEntity.getEmail());
             System.out.print(seller.toString());
             if (seller==null) {
-                throw new UserPrincipalNotFoundException("User not found");
+                return new ResponseEntity<>("User not found",HttpStatus.NOT_FOUND);
             }
             sellerLoginEntity.setIsEmailVerified(seller.getEmail_verified());
             String passwordEntered =sellerLoginEntity.getPassword();
@@ -92,6 +91,7 @@ public class SellerController
             if (passwordEntered.equals(passwordActuall) && sellerLoginEntity.getIsEmailVerified().equals("Y")) {
                 session.setAttribute("isAuth", "Y");
                 session.setAttribute("email",sellerLoginEntity.getEmail());
+                session.setAttribute("name",seller.getShop_name());
                 return new ResponseEntity<>("LOGGED IN SUCCESSFULLY", HttpStatus.ACCEPTED);
             } else if (passwordEntered.equals(passwordActuall) && sellerLoginEntity.getIsEmailVerified().equals("N")) {
                 return new ResponseEntity<>("NOT VERIFIED, PLEASE VERIFY YOUR EMAIL", HttpStatus.ACCEPTED);
@@ -103,10 +103,12 @@ public class SellerController
         }
         return new ResponseEntity<String>("INVALID", HttpStatus.ACCEPTED);
     }
-    @PostMapping(value = "/logout")
+    @GetMapping(value = "/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
         HttpSession session = request.getSession();
         session.removeAttribute("isAuth");
+        session.removeAttribute("email");
+        session.removeAttribute("name");
         session.invalidate();
         return new ResponseEntity<>("Logged Out", HttpStatus.ACCEPTED);
     }
@@ -142,6 +144,16 @@ public class SellerController
         orderRepository.updateStatus(status,id);
         return new ResponseEntity<>("UPDATED TO "+status, HttpStatus.ACCEPTED);
     }
+
+
+    @PutMapping(value = "/forgotpassword")
+    public ResponseEntity<String> updatePassword(@RequestBody String newPassword, String email)
+    {
+        sellerRepository.updatePassword(newPassword,email);
+        return new ResponseEntity<>("CHANGED",HttpStatus.OK);
+    }
+
+
 
 
 
