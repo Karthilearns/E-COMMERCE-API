@@ -103,7 +103,7 @@ public class UserController {
             }
             userLoginEntity.setIsVerified(user.getEmailVerified());
             String passwordEntered = userLoginEntity.getPassword();
-            String passwordActuall = new String(java.util.Base64.getDecoder().decode(user.getPassword()));
+            String passwordActuall = new String(java.util.Base64.getDecoder().decode("user.getPassword()"));
 
             if (passwordEntered.equals(passwordActuall) && userLoginEntity.getIsVerified().equals("Y")) {
                 session.setAttribute("isAuth", "Y");

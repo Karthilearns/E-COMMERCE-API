@@ -13,7 +13,7 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Products, String>
 {
 
-    @Query(value = "select * from Products where product_name = ?1 or category = ?2",nativeQuery = true)
+    @Query(value = "select * from Products where product_name like %:filter1% or category like %:filter2%",nativeQuery = true)
     public List<Products> getProducts(String filter1, String filter2);
 
 
