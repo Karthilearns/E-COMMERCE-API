@@ -32,7 +32,7 @@ public class SellerVerificationMailerEntity {
 
             protected PasswordAuthentication getPasswordAuthentication() {
 
-                return new PasswordAuthentication(fromAddress, "Youtubeforlife@09");
+                return new PasswordAuthentication(fromAddress, "");
 
             }
 
