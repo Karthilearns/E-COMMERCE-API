@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User,String> {
-     @Query(value = "select * from User where email = ?1",nativeQuery = true)
+     @Query(value = "select * from user where email = ?1",nativeQuery = true)
      public User getUserById(String email);
 
-     @Query(value = "select token from User where email=?1", nativeQuery = true)
+     @Query(value = "select token from user where email=?1", nativeQuery = true)
      public String getTokenByEmail(String email);
 
      @Transactional

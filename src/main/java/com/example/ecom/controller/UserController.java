@@ -95,21 +95,23 @@ public class UserController {
     public ResponseEntity<String> signInUser(UserLoginEntity userLoginEntity, HttpServletRequest request) {
 
         try {
+            System.out.print("hi");
             System.out.print(userLoginEntity.getEmail());
             User user = userService.getUserById(userLoginEntity.getEmail());
             System.out.print(user.toString());
-            if (user.equals(null)) {
+            if (user==null) {
                 throw new UserPrincipalNotFoundException("User not found");
             }
             userLoginEntity.setIsVerified(user.getEmailVerified());
             String passwordEntered = userLoginEntity.getPassword();
-            String passwordActuall = new String(java.util.Base64.getDecoder().decode("user.getPassword()"));
+            String passwordActuall = new String(java.util.Base64.getDecoder().decode(user.getPassword()));
 
             if (passwordEntered.equals(passwordActuall) && userLoginEntity.getIsVerified().equals("Y")) {
                 session.setAttribute("isAuth", "Y");
                 session.setAttribute("name",user.getFirstName());
                 System.out.println(session.getAttribute("name"));
                 session.setAttribute("email",userLoginEntity.getEmail());
+                System.out.println(session.getAttribute("email"));
                 return new ResponseEntity<>("LOGGED IN SUCCESSFULLY", HttpStatus.ACCEPTED);
             } else if (passwordEntered.equals(passwordActuall) && userLoginEntity.getIsVerified().equals("N")) {
                 return new ResponseEntity<>("NOT VERIFIED, PLEASE VERIFY YOUR EMAIL", HttpStatus.ACCEPTED);
@@ -203,6 +205,7 @@ public class UserController {
       System.out.println(name);
        return new ResponseEntity<>(name,HttpStatus.OK);
     }
+
     @PutMapping(value = "/forgotpassword")
     public ResponseEntity<String> updatePassword(@RequestBody String newPassword, String email)
     {
